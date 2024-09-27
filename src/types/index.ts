@@ -9,17 +9,18 @@ export interface IProductItem {
 
 export interface IProductList {
     total: number;
-    items: IProductItem[]
+    items: IProductItem[];
+    preview: string | null;
 } 
 
 export interface IUser {
-    payment: string;
     email: string;
     phone: number;
     address: string;
 }
 
 export interface IOrderForm {
+    payment: string;
     email: string;
     phone: string;
 }
