@@ -9,7 +9,10 @@ export interface IProductItem {
 
 export interface IProductList {
     total: number;
-    items: IProductItem[];
+    catalog: IProductItem[];
+    basket: string[];
+    order: IOrder | null;
+    loading: boolean;
     preview: string | null;
 } 
 
@@ -33,3 +36,5 @@ export interface IOrder extends IOrderForm {
 export interface IOrderResult {
     id: string;
 }
+
+export type FormErrors = Partial<Record<keyof IOrder, string>>;

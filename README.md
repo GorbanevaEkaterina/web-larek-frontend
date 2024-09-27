@@ -73,7 +73,10 @@ interface IProductItem {
 ```
 interface IProductList {
     total: number;
-    items: IProductItem[];
+    catalog: IProductItem[];
+    basket: string[];
+    order: IOrder | null;
+    loading: boolean;
     preview: string | null;
 }
 ```
@@ -146,3 +149,20 @@ interface IOrderResult {
 подписчиков.
 
 ### Слой данных
+
+#### Абстрактный класс Component
+
+Самый главный класс для всех элементов представления.
+Основные методы, реализуемые классом:
+
+- `setText` - метод устанавливает текстовое содержимое
+- `setDisable` - метод статуса блокировки
+- `setHiden` - метод скрывает элемент
+- `setVisible` - метод показывает элемент
+- `setImage` - метод устанавливает изображение
+- `render` - метод возвращает элемент разметки, для отображнения на странице
+
+#### Абстрактный класс Model
+
+Kласс модели данных
+Содержит метод `emitChanges`, который создаёт уникальное событие
