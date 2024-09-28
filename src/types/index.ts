@@ -16,6 +16,11 @@ export interface IProductList {
     preview: string | null;
 } 
 
+export interface IAppState {
+    catalog: IProductList[];
+    preview: string | null;
+    order: IOrder | null;
+}
 export interface IUser {
     email: string;
     phone: number;
@@ -26,15 +31,18 @@ export interface IOrderForm {
     payment: string;
     email: string;
     phone: string;
+    address: string;
+    
 }
 
 export interface IOrder extends IOrderForm {
-    id: string;
-    items: string[]
+    items: string[];
+    total: number;
 }
 
 export interface IOrderResult {
     id: string;
+    total: number;
 }
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
