@@ -12,3 +12,5 @@ export const categoryChange: Record<string, string> = {
     'кнопка': 'card__category_button',
     'хард-скил': 'card__category_hard'
 };
+
+export const ACTIVE_BUTTON_CLASS = 'button_alt-active';

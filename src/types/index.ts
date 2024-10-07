@@ -1,3 +1,5 @@
+
+// модель продукта(товара)
 export interface IProductItem {
     id: string;
     description: string;
@@ -7,24 +9,27 @@ export interface IProductItem {
     price: number | null;
 }
 
-export interface IProductList {
-    total: number;
-    catalog: IProductItem[];
-    basket: string[];
-    order: IOrder | null;
-    loading: boolean;
-    preview: string | null;
-} 
-
 export interface IAppState {
-    catalog: IProductList[];
-    preview: string | null;
-    order: IOrder | null;
+    catalog: IProductItem[];
+	basket: IProductItem[];
+	order: IOrder;
+	orderFormErrors: OrderFormErrors;
+	contactsFormErrors: ContactsFormErrors;
 }
-export interface IUser {
-    email: string;
-    phone: number;
-    address: string;
+// export interface IUser {
+//     email: string;
+//     phone: number;
+//     address: string;
+// }
+
+export interface IUserDataForm {
+	payment: string;
+	address: string;
+}
+
+export interface IUserContactsForm {
+	email: string;
+	phone: string;
 }
 
 export interface IOrderForm {
@@ -44,5 +49,8 @@ export interface IOrderResult {
     id: string;
     total: number;
 }
+export type FormName = 'order' | 'contacts';
 
-export type FormErrors = Partial<Record<keyof IOrder, string>>;
+export interface IAnyForm extends IOrderForm, IUserContactsForm {}
+export type OrderFormErrors = Partial<Record<keyof IOrderForm, string>>;
+export type ContactsFormErrors = Partial<Record<keyof IUserContactsForm, string>>;

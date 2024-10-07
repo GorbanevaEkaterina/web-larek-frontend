@@ -1,69 +1,51 @@
-import {Form} from "./common/Form";
-import {IOrderForm} from "../types";
-import {EventEmitter, IEvents} from "./base/events";
-import {ensureElement} from "../utils/utils";
-
-interface IOrderActions {
-    onClick: (event: MouseEvent) => void;
-}
+import { Form } from './common/Form';
+import { IOrderForm } from '../types';
+import { IEvents } from './base/events';
+import { ACTIVE_BUTTON_CLASS } from '../utils/constants';
 
 export class Order extends Form<IOrderForm> {
-    protected _cardPayment: HTMLButtonElement;
-    protected _cashPayment: HTMLButtonElement;
-     
-    constructor(container: HTMLFormElement, events: IEvents, actions?: IOrderActions) {
-        super(container, events);
+	protected buttons: HTMLButtonElement[] = [];
 
-        this._cashPayment = this.container.elements.namedItem('cash') as HTMLButtonElement;
-        this._cardPayment = this.container.elements.namedItem('card') as HTMLButtonElement;
+	constructor(container: HTMLFormElement, events: IEvents) {
+		super(container, events);
 
-        if(actions?.onClick) {
-            this._cashPayment.addEventListener('click', (evt)=> {
-                actions.onClick(evt);
-                events.emit('order.payment: change', {
-                    field: 'payment',
-                    value: 'cash'
-                });
-            });
-            this._cardPayment.addEventListener('click', (evt) => {
-                actions.onClick(evt);
-                events.emit('order.payment: change', {
-                    field: 'payment',
-                    value: 'card'
-                });
-            });
-        }
-    }
-    
-    set payment(value: string) {
-        if(value === 'cash') {
-            this._cashPayment.classList.add('button_alt-active');
-            this._cardPayment.classList.remove('button_alt-active');
-        }
-        if(value === 'card') {
-            this._cardPayment.classList.add('button_alt-active');
-            this._cashPayment.classList.remove('button_alt-active');
-        }
-        if(value === '') {
-            this._cardPayment.classList.remove('button_alt-active');
-            this._cashPayment.classList.remove('button_alt-active');
-        }
-    }
+		this.buttons = [
+			container.elements.namedItem('cash') as HTMLButtonElement,
+			container.elements.namedItem('card') as HTMLButtonElement,
+		];
 
-    set address(value: string) {
-        (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
-    } 
-}
+		this.buttons.forEach((button) => {
+			button.addEventListener('click', () => {
+				this.buttons.forEach((item) =>
+					item.classList.remove(ACTIVE_BUTTON_CLASS)
+				);
+				button.classList.add(ACTIVE_BUTTON_CLASS);
+				this.onInputChange('payment', button.name);
+			});
+		});
+	}
+	set payment(value: string) {
+		const currentButton = this.buttons.find((button, index, array) => {
+			return button.name === value;
+		});
+		if (currentButton) {
+			currentButton.classList.add(ACTIVE_BUTTON_CLASS);
+			this.onInputChange('payment', currentButton.name);
+		}
+	}
 
-export class ClientContacts extends Form<IOrderForm> {
-    constructor(container: HTMLFormElement, events: IEvents) {
-        super(container, events)   
-    }
-     set phone(value: string) {
-        (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
-    }
-
-    set email(value: string) {
-        (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
-    }
+	set address(value: string) {
+		(this.container.elements.namedItem('address') as HTMLInputElement).value =
+			value;
+	}
+	set valid(value: boolean) {
+		this._submit.disabled = !value;
+	}
+	cleanFieldValues() {
+		this.address = '';
+		this.payment = '';
+		this.buttons.forEach((button) =>
+			button.classList.remove(ACTIVE_BUTTON_CLASS)
+		);
+	}
 }

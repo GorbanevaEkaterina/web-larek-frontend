@@ -4,8 +4,7 @@ import {ensureElement} from "../utils/utils";
 
 interface IPage {
     counter: number;
-    catalog: HTMLElement[];
-    locked: boolean;
+	catalog: HTMLElement[];
 }
 
 export class Page extends Component<IPage> {

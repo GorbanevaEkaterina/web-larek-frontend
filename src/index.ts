@@ -3,15 +3,16 @@ import './scss/styles.scss';
 import {WebStoreApi} from "./components/WebStoreApi";
 import {API_URL, CDN_URL} from "./utils/constants";
 import {EventEmitter} from "./components/base/events";
-import {AppState, orderDefault} from "./components/AppData";
+import {AppState} from "./components/AppData";
 import {Page} from "./components/Page";
 import {cloneTemplate, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
 import {Basket} from "./components/common/Basket";
 import {IOrderForm, IProductItem} from "./types";
-import { Card, CardBasket, CardPreview } from './components/Card';
-import {ClientContacts, Order} from "./components/Order";
+import { Card } from './components/Card';
+import { Order} from "./components/Order";
 import {Success} from "./components/common/Success";
+import { Contacts } from './components/Contacts';
 
 const events = new EventEmitter();
 const api = new WebStoreApi(CDN_URL, API_URL);
@@ -38,14 +39,10 @@ const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
-const basket = new Basket(cloneTemplate(basketTemlate), events);
-const clientContacts = new ClientContacts(cloneTemplate(constantsTemplate), events);
-const order = new Order(cloneTemplate(orderTemplate), events, {
-    onClick: (event: MouseEvent) => {
-        const target = (event.target as HTMLButtonElement).name;
-        order.payment = target;
-    }
-})
+const basket = new Basket(cloneTemplate(basketTemplate), events);
+const order = new Order(cloneTemplate(orderTemplate), events);
+const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
+const success = new Success(cloneTemplate(successTemplate), events);
 
 //Бизнес-логика
 //Изменились элементы каталога, отрисовка карточек товара
@@ -166,8 +163,7 @@ events.on('order: submit', () => {
 
 //Отправка формы контакты клиента, открытие окна успех
 events.on('contacts: submit', () => {
-        appData.getOrderItems().filter(p => p.price === null).forEach(product => 
-            appData.order.items = appData.order.items.filter(i => i != product.id)
+        appData.getOrderItems().filter(p => p.price === null).forEach(product => appData.order.items = appData.order.items.filter(i => i != product.id)
         ) 
     api.orderItem(appData.order)
     .then(() => {
