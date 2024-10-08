@@ -1,23 +1,30 @@
 import {Component} from "../base/Component";
 import {priceString} from "../../utils/utils";
-import { EventEmitter } from '../../components/base/events';
+import {ensureElement} from "../../utils/utils";
 
 interface ISuccess {
     total: number;
 }
 
-export class Success extends Component<ISuccess> {
-	protected _button: HTMLButtonElement;
-	protected _description: HTMLElement;
+export interface ISuccessActions {
+	onClick: () => void;
+}
 
-	constructor(container: HTMLElement, events: EventEmitter) {
+export class Success extends Component<ISuccess> {
+	protected _close: HTMLElement;
+    protected _pricePurchasesTotal: HTMLElement;
+
+	constructor(container: HTMLElement, actions: ISuccessActions) {
 		super(container);
-		this._description = container.querySelector(`.order-success__description`);
-		this._button = container.querySelector(`.order-success__close`);
-		this._button.addEventListener('click', () => events.emit('success:submit'));
+		this._close = ensureElement<HTMLElement>('.order-success__close', this.container);
+        this._pricePurchasesTotal = ensureElement<HTMLElement>(".order-success__description", this.container);
+
+        if (actions?.onClick) {
+            this._close.addEventListener('click', actions.onClick);
+        }
 	}
 
 	set total(value: number) {
-		this._description.textContent = 'Списано ' + priceString(value);
+		this._pricePurchasesTotal.textContent = 'Списано ' + priceString(value);
 	}
 }

@@ -1,10 +1,12 @@
 import { createElement, ensureElement} from '../../utils/utils';
 import { Component } from '../base/Component';
+import {priceString} from "../../utils/utils";
 import { EventEmitter } from '../base/events';
 
 interface IBasket {
 	items: HTMLElement[];
 	total: number;
+	button: string[];
 }
 
 export class Basket extends Component<IBasket> {
@@ -24,12 +26,12 @@ export class Basket extends Component<IBasket> {
 
 		if (this._button) {
 			this._button.addEventListener('click', () => {
-				events.emit('order: open');
+				events.emit('address: open');
 			});
 		}
 
 		this.items = [];
-		this.disableButton(true);
+		
 	}
 
 	set items(items: HTMLElement[]) {
@@ -43,12 +45,16 @@ export class Basket extends Component<IBasket> {
 			);
 		}
 	}
+	set selected(items: number) {
+        if ( items === 0 ) {
+            this.setDisabled(this._button, true);
+        } else {
+            this.setDisabled(this._button, false);
+        }
+    }
 
 	set total(total: number) {
-		this.setText(this._total, `${total} синапсов`);
+		this._total.textContent = priceString(total);
 	}
 
-	disableButton(disabled: boolean) {
-		this.setDisabled(this._button, disabled);
-	}
 }

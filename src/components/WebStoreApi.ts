@@ -1,10 +1,10 @@
-import { Api, ApiListResponse } from './base/api';
-import { IProductItem, IOrderResult, IOrderForm } from "../types";
+import { Api,ApiListResponse } from './base/api';
+import { IProductItem, IOrderResult, IOrder } from "../types";
 
 export interface IWebStoreApi {
     getProductList: () => Promise<IProductItem[]>;
     getProductItem: (id: string) => Promise<IProductItem>;
-    orderItem: (order: IOrderForm) => Promise<IOrderResult>; 
+	orderProducts: (order: IOrder) => Promise<IOrderResult>;
 }
 
 export class WebStoreApi extends Api implements IWebStoreApi {
@@ -14,17 +14,13 @@ export class WebStoreApi extends Api implements IWebStoreApi {
         super(baseUrl, options);
         this.cdn = cdn;
     }
-
     getProductItem(id: string): Promise<IProductItem> {
-        return this.get(`/product/${id}`).then(
-            (item: IProductItem) => ({
-                ...item,
-                image: this.cdn + item.image,
-            })
-        );
-    }
-
-
+		return this.get(`/product/${id}`).then((item: IProductItem) => ({
+			...item,
+			image: this.cdn + item.image,
+		}));
+	}
+    
     getProductList(): Promise<IProductItem[]> {
         return this.get('/product').then((data: ApiListResponse<IProductItem>) =>
             data.items.map((item) => ({
@@ -34,10 +30,9 @@ export class WebStoreApi extends Api implements IWebStoreApi {
         );
     }
 
-    orderItem(order: IOrderForm): Promise<IOrderResult> {
-        return this.post('/order', order).then(
-            (data: IOrderResult) => data
-        );
-    }
+   
+    orderProducts(orderData: IOrder): Promise<IOrderResult> {
+		return this.post('/order', orderData).then((data: IOrderResult) => data);
+	}
 
 }

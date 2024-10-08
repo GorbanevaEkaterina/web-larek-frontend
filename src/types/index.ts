@@ -7,50 +7,60 @@ export interface IProductItem {
     title: string;
     category: string;
     price: number | null;
+    index?: number;
+	buttonName?: string;
 }
 
+// главная страница
 export interface IAppState {
     catalog: IProductItem[];
 	basket: IProductItem[];
-	order: IOrder;
-	orderFormErrors: OrderFormErrors;
-	contactsFormErrors: ContactsFormErrors;
+	order: IOrder | null;
+	preview: string | null;
 }
-// export interface IUser {
-//     email: string;
-//     phone: number;
-//     address: string;
-// }
 
+// способ оплаты и адрес
 export interface IUserDataForm {
 	payment: string;
 	address: string;
 }
-
+// почта и телефон
 export interface IUserContactsForm {
 	email: string;
 	phone: string;
 }
 
-export interface IOrderForm {
-    payment: string;
-    email: string;
-    phone: string;
-    address: string;
+// export interface IOrderForm {
+//     payment: string;
+//     email: string;
+//     phone: string;
+//     address: string;
     
-}
+// }
 
-export interface IOrder extends IOrderForm {
+// данные заказа
+export interface IOrder extends IUserDataForm, IUserContactsForm {
     items: string[];
     total: number;
 }
 
+export type IOrderPerson = IUserDataForm & IUserContactsForm;
+
+export type OrderFormErrors = Partial<Record<keyof IOrderPerson, string>>;
+
+// заказ оформлен
 export interface IOrderResult {
-    id: string;
+    id: string[];
     total: number;
 }
-export type FormName = 'order' | 'contacts';
 
-export interface IAnyForm extends IOrderForm, IUserContactsForm {}
-export type OrderFormErrors = Partial<Record<keyof IOrderForm, string>>;
-export type ContactsFormErrors = Partial<Record<keyof IUserContactsForm, string>>;
+export type CatalogChangeEvent = {
+	catalog: IProductItem[];
+};
+
+
+export interface IAppForm {
+  IOrderPerson: IOrderPerson;
+  formErrors: OrderFormErrors;
+}
+

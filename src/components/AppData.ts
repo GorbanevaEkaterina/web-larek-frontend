@@ -1,17 +1,6 @@
 import {Model} from "./base/Model";
-import {OrderFormErrors, ContactsFormErrors, IAppState, IProductItem, IOrder, FormName, IAnyForm} from "../types";
+import {OrderFormErrors, IAppState, IProductItem, IOrder} from "../types";
 import { IEvents } from './base/events';
-
-export class Item extends Model<IProductItem> {
-	id: string;
-	description: string;
-	image: string;
-	title: string;
-	category: string;
-	price: number | null;
-}
-
-
 
 export class AppState extends Model<IAppState> {
     catalog: IProductItem[] = [];
@@ -24,88 +13,49 @@ export class AppState extends Model<IAppState> {
 		total: 0,
 		items: [],
 	};
-    orderFormErrors: OrderFormErrors = {};
-	contactsFormErrors: ContactsFormErrors = {};
-
-    constructor(data: Partial<IAppState>, protected events: IEvents) {
-		super(data, events);
-		this.catalog = [];
-		this.basket = [];
-		this.cleanOrder();
-	}
+	preview: string | null;
+    
+    // constructor(data: Partial<IAppState>, protected events: IEvents) {
+	// 	super(data, events);
+	// 	this.catalog = [];
+	// 	this.basket = [];
+	// 	this.cleanOrder();
+	// }
 
     setCatalog(items: IProductItem[]) {
-        this.catalog = items.map((item) => new Item(item, this.events));
-        this.emitChanges('item: changed');
+		this.catalog = items;
+		this.emitChanges('items:changed', { catalog: this.catalog });
     }
 
     addBasket(item: IProductItem) {
 		this.basket.push(item);
 		this.emitChanges('basket:changed');
 	}
+	updateCardsBasket(){
+		this.emitChanges('counter:changed', this.basket);
+		this.emitChanges('basket:changed', this.basket);
+	}
 
+	cleanBasketState() {
+		this.basket = [];
+		this.updateCardsBasket();
+	}
 	removeBasket(item: IProductItem) {
 		this.basket = this.basket.filter((basketItem) => basketItem.id !== item.id);
-		this.emitChanges('basket:changed');
+		this.updateCardsBasket();
 	}
 
-	isInBasket(item: IProductItem) {
-		return this.basket.some((basketItem) => {
-			return basketItem.id === item.id;
-		});
-	}
+	setBasketPreview(item: IProductItem) {
+		this.preview = item.id;
+		this.emitChanges('preview:changed', item);
+		};
+	
 
-	getNumberBasket(): number {
-		return this.basket.length;
-	}
 
 	getTotalBasket(): number {
 		return this.basket.reduce((a, b) => {
 			return a + b.price;
 		}, 0);
-	}
-
-	setField(field: keyof IAnyForm, value: string) {
-		this.order[field] = value;
-
-		if (this.validate('order')) {
-			this.events.emit('order:ready', this.order);
-		}
-
-		if (this.validate('contacts')) {
-			this.events.emit('contacts:ready', this.order);
-		}
-	}
-
-	validate(formType: FormName) {
-		const errors =
-			formType === 'order' ? this.setOrderErrors() : this.setContactsErrors();
-		this.events.emit(formType + 'FormErrors:change', errors);
-		return Object.keys(errors).length === 0;
-	}
-
-	setOrderErrors() {
-		const errors: OrderFormErrors = {};
-		if (!this.order.payment) {
-			errors.payment = 'Выберите способ оплаты';
-		}
-		if (!this.order.address) {
-			errors.address = 'Укажите адрес';
-		}
-		this.orderFormErrors = errors;
-		return errors;
-	}
-
-	setContactsErrors() {
-		const errors: ContactsFormErrors = {};
-		if (!this.order.phone) {
-			errors.phone = 'Укажите телефон';
-		}
-		if (!this.order.email) {
-			errors.email = 'Укажите емейл';
-		}
-		this.contactsFormErrors = errors;
-		return errors;
 	}
 
 	cleanOrder() {
@@ -117,41 +67,7 @@ export class AppState extends Model<IAppState> {
 			total: 0,
 			items: [],
 		};
-		this.orderFormErrors = {};
-		this.contactsFormErrors = {};
+		
 	}
 
-	cleanBasketState() {
-		this.basket = [];
-		this.emitChanges('basket:changed');
-	}
-
-	prepareOrder() {
-		this.order.total = this.getTotalBasket();
-		this.basket.forEach((item) => {
-			if (item.price) {
-				this.order.items.push(item.id);
-			}
-		});
-	}
-
-	getOrderData() {
-		return structuredClone(this.order);
-	}
-
-	getAddress() {
-		return this.order.address;
-	}
-
-	getPayment() {
-		return this.order.payment;
-	}
-
-	getEmail() {
-		return this.order.email;
-	}
-
-	getPhone() {
-		return this.order.phone;
-	}
 }

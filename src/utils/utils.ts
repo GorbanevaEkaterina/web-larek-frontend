@@ -155,3 +155,4 @@ export function createElement<T extends HTMLElement>(
 export function priceString(value: number | null): string {
 	return Number.isInteger(value) ? value + ' синапсов' : 'Бесценно';
 }
+ 

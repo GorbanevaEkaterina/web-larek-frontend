@@ -5,12 +5,4 @@ export const settings = {
 
 };
 
-export const categoryChange: Record<string, string> = {
-    'софт-скил': 'card__category_soft',
-    'другое': 'card__category_other',
-    'дополнительное': 'card__category_additional',
-    'кнопка': 'card__category_button',
-    'хард-скил': 'card__category_hard'
-};
 
-export const ACTIVE_BUTTON_CLASS = 'button_alt-active';

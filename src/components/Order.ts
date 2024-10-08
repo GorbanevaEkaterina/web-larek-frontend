@@ -1,51 +1,107 @@
 import { Form } from './common/Form';
-import { IOrderForm } from '../types';
+import { IUserDataForm, IUserContactsForm } from '../types';
 import { IEvents } from './base/events';
-import { ACTIVE_BUTTON_CLASS } from '../utils/constants';
+import { ensureElement } from '../utils/utils';
 
-export class Order extends Form<IOrderForm> {
-	protected buttons: HTMLButtonElement[] = [];
+export class UserDataForm extends Form<IUserDataForm> {
+	protected _onlineButton: HTMLButtonElement;
+	protected _cashButton: HTMLButtonElement;
+	protected _addressInput: HTMLInputElement;
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this.buttons = [
-			container.elements.namedItem('cash') as HTMLButtonElement,
-			container.elements.namedItem('card') as HTMLButtonElement,
-		];
+		this._onlineButton = ensureElement<HTMLButtonElement>(
+			'.online',
+			this.container
+		);
+		this._cashButton = ensureElement<HTMLButtonElement>(
+			'.cash',
+			this.container
+		);
+		this._addressInput = ensureElement<HTMLInputElement>(
+			'.address_input',
+			this.container
+		);
 
-		this.buttons.forEach((button) => {
-			button.addEventListener('click', () => {
-				this.buttons.forEach((item) =>
-					item.classList.remove(ACTIVE_BUTTON_CLASS)
-				);
-				button.classList.add(ACTIVE_BUTTON_CLASS);
-				this.onInputChange('payment', button.name);
+		this._onlineButton.addEventListener('click', (e: Event) => {
+			e.preventDefault();
+			this._onlineButton.classList.add('button_alt-active');
+			this._cashButton.classList.remove('button_alt-active');
+			events.emit('address:change', { field: 'payment', value: 'Онлайн' });
+		});
+
+		this._cashButton.addEventListener('click', (e: Event) => {
+			e.preventDefault();
+			this._cashButton.classList.add('button_alt-active');
+			this._onlineButton.classList.remove('button_alt-active');
+			events.emit('address:change', {
+				field: 'payment',
+				value: 'При получении',
 			});
 		});
-	}
-	set payment(value: string) {
-		const currentButton = this.buttons.find((button, index, array) => {
-			return button.name === value;
-		});
-		if (currentButton) {
-			currentButton.classList.add(ACTIVE_BUTTON_CLASS);
-			this.onInputChange('payment', currentButton.name);
+
+		if (this._addressInput) {
+			this._addressInput.addEventListener('input', (evt: InputEvent) => {
+				const target = evt.target as HTMLInputElement;
+				const value = target.value;
+				events.emit('address:change', { field: 'address', value: value });
+			});
 		}
 	}
 
-	set address(value: string) {
+	set addressInput(value: string) {
 		(this.container.elements.namedItem('address') as HTMLInputElement).value =
 			value;
 	}
-	set valid(value: boolean) {
-		this._submit.disabled = !value;
+
+	clearFormAddress() {
+		this._addressInput.value = '';
+		this._cashButton.classList.remove('button_alt-active');
+		this._onlineButton.classList.remove('button_alt-active');
 	}
-	cleanFieldValues() {
-		this.address = '';
-		this.payment = '';
-		this.buttons.forEach((button) =>
-			button.classList.remove(ACTIVE_BUTTON_CLASS)
+}
+
+export class contactsForm extends Form<IUserContactsForm> {
+	protected _emailInput: HTMLInputElement;
+	protected _phoneInput: HTMLInputElement;
+
+	constructor(container: HTMLFormElement, events: IEvents) {
+		super(container, events);
+
+		this._emailInput = ensureElement<HTMLInputElement>(
+			'.email_input',
+			this.container
 		);
+		this._phoneInput = ensureElement<HTMLInputElement>(
+			'.phone_input',
+			this.container
+		);
+
+		if (this._emailInput) {
+			this._emailInput.addEventListener('input', (evt: InputEvent) => {
+				const target = evt.target as HTMLInputElement;
+				const value = target.value;
+				events.emit('contacts:change', { field: 'email', value: value });
+			});
+		}
+
+		if (this._phoneInput) {
+			this._phoneInput.addEventListener('input', (evt: InputEvent) => {
+				const target = evt.target as HTMLInputElement;
+				const value = target.value;
+				events.emit('contacts:change', { field: 'phone', value: value });
+			});
+		}
+	}
+
+	set phone(value: string) {
+		(this.container.elements.namedItem('phone') as HTMLInputElement).value =
+			value;
+	}
+
+	set email(value: string) {
+		(this.container.elements.namedItem('email') as HTMLInputElement).value =
+			value;
 	}
 }
