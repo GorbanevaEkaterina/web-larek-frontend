@@ -1,9 +1,9 @@
 import {Component} from "../base/Component";
-import {priceString} from "../../utils/utils";
 import {ensureElement} from "../../utils/utils";
 
 interface ISuccess {
-    total: number;
+    title: string;
+	description: string;
 }
 
 export interface ISuccessActions {
@@ -12,19 +12,31 @@ export interface ISuccessActions {
 
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;
-    protected _pricePurchasesTotal: HTMLElement;
+    protected _title: HTMLElement;
+	protected _description: HTMLElement;
 
 	constructor(container: HTMLElement, actions: ISuccessActions) {
 		super(container);
 		this._close = ensureElement<HTMLElement>('.order-success__close', this.container);
-        this._pricePurchasesTotal = ensureElement<HTMLElement>(".order-success__description", this.container);
+        this._title = ensureElement<HTMLElement>(
+			'.order-success__title',
+			this.container
+		);
+		this._description = ensureElement<HTMLElement>(
+			'.order-success__description',
+			this.container
+		);
 
         if (actions?.onClick) {
             this._close.addEventListener('click', actions.onClick);
         }
 	}
 
-	set total(value: number) {
-		this._pricePurchasesTotal.textContent = 'Списано ' + priceString(value);
+	set title(value: string) {
+		this.setText(this._title, value);
+	}
+
+	set description(value: string) {
+		this.setText(this._description, value);
 	}
 }

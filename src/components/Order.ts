@@ -1,9 +1,9 @@
 import { Form } from './common/Form';
-import { IUserDataForm, IUserContactsForm } from '../types';
+import { Events,IOrder } from '../types';
 import { IEvents } from './base/events';
-import { ensureElement } from '../utils/utils';
 
-export class UserDataForm extends Form<IUserDataForm> {
+
+export class UserDataForm extends Form<IOrder> {
 	protected _onlineButton: HTMLButtonElement;
 	protected _cashButton: HTMLButtonElement;
 	protected _addressInput: HTMLInputElement;
@@ -11,97 +11,48 @@ export class UserDataForm extends Form<IUserDataForm> {
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this._onlineButton = ensureElement<HTMLButtonElement>(
-			'.online',
-			this.container
-		);
-		this._cashButton = ensureElement<HTMLButtonElement>(
-			'.cash',
-			this.container
-		);
-		this._addressInput = ensureElement<HTMLInputElement>(
-			'.address_input',
-			this.container
-		);
+		this._onlineButton = container.querySelector<HTMLButtonElement>('button[name="card"]');
+		this._cashButton = container.querySelector<HTMLButtonElement>('button[name="cash"]');
+		this._addressInput = container.querySelector<HTMLInputElement>('input[name="address"]');
 
-		this._onlineButton.addEventListener('click', (e: Event) => {
-			e.preventDefault();
-			this._onlineButton.classList.add('button_alt-active');
-			this._cashButton.classList.remove('button_alt-active');
-			events.emit('address:change', { field: 'payment', value: 'Онлайн' });
-		});
+		this._onlineButton.addEventListener('click', () => this.togglePaymentMethod('card'));
+		this._cashButton.addEventListener('click', () => this.togglePaymentMethod('cash'));
+			
+	}
+	toggleCard(state: boolean = true) {
+		this.toggleClass(this._onlineButton, 'button_alt-active', state);
+	}
 
-		this._cashButton.addEventListener('click', (e: Event) => {
-			e.preventDefault();
-			this._cashButton.classList.add('button_alt-active');
-			this._onlineButton.classList.remove('button_alt-active');
-			events.emit('address:change', {
-				field: 'payment',
-				value: 'При получении',
-			});
-		});
+	toggleCash(state: boolean = true) {
+		this.toggleClass(this._cashButton, 'button_alt-active', state);
+	}
 
-		if (this._addressInput) {
-			this._addressInput.addEventListener('input', (evt: InputEvent) => {
-				const target = evt.target as HTMLInputElement;
-				const value = target.value;
-				events.emit('address:change', { field: 'address', value: value });
-			});
+	togglePaymentMethod(selectedPayment: string) {
+		const isCardActive = this._onlineButton.classList.contains('button_alt-active');
+		const isCashActive = this._cashButton.classList.contains('button_alt-active');
+
+		if (selectedPayment === 'card') {
+			this.toggleCard(!isCardActive);
+			this.payment = isCardActive ? null : 'card';
+			if (!isCardActive) this.toggleCash(false);
+		} else if (selectedPayment === 'cash') {
+			this.toggleCash(!isCashActive);
+			this.payment = isCashActive ? null : 'cash';
+			if (!isCashActive) this.toggleCard(false);
 		}
 	}
 
-	set addressInput(value: string) {
-		(this.container.elements.namedItem('address') as HTMLInputElement).value =
-			value;
+	resetPaymentButtons() {
+		this.toggleCard(false);
+		this.toggleCash(false);
 	}
 
-	clearFormAddress() {
-		this._addressInput.value = '';
-		this._cashButton.classList.remove('button_alt-active');
-		this._onlineButton.classList.remove('button_alt-active');
-	}
-}
-
-export class contactsForm extends Form<IUserContactsForm> {
-	protected _emailInput: HTMLInputElement;
-	protected _phoneInput: HTMLInputElement;
-
-	constructor(container: HTMLFormElement, events: IEvents) {
-		super(container, events);
-
-		this._emailInput = ensureElement<HTMLInputElement>(
-			'.email_input',
-			this.container
-		);
-		this._phoneInput = ensureElement<HTMLInputElement>(
-			'.phone_input',
-			this.container
-		);
-
-		if (this._emailInput) {
-			this._emailInput.addEventListener('input', (evt: InputEvent) => {
-				const target = evt.target as HTMLInputElement;
-				const value = target.value;
-				events.emit('contacts:change', { field: 'email', value: value });
-			});
-		}
-
-		if (this._phoneInput) {
-			this._phoneInput.addEventListener('input', (evt: InputEvent) => {
-				const target = evt.target as HTMLInputElement;
-				const value = target.value;
-				events.emit('contacts:change', { field: 'phone', value: value });
-			});
-		}
+	set address(value: string) {
+		this._addressInput.value = value;
 	}
 
-	set phone(value: string) {
-		(this.container.elements.namedItem('phone') as HTMLInputElement).value =
-			value;
+	set payment(value: string) {
+		this.events.emit(Events.SET_PAYMENT_METHOD, { paymentType: value });
 	}
-
-	set email(value: string) {
-		(this.container.elements.namedItem('email') as HTMLInputElement).value =
-			value;
-	}
+	
 }

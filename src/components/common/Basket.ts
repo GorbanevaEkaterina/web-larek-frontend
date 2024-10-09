@@ -1,12 +1,11 @@
 import { createElement, ensureElement} from '../../utils/utils';
 import { Component } from '../base/Component';
-import {priceString} from "../../utils/utils";
 import { EventEmitter } from '../base/events';
+import { Events } from '../../types/index';
 
 interface IBasket {
 	items: HTMLElement[];
 	total: number;
-	button: string[];
 }
 
 export class Basket extends Component<IBasket> {
@@ -26,7 +25,7 @@ export class Basket extends Component<IBasket> {
 
 		if (this._button) {
 			this._button.addEventListener('click', () => {
-				events.emit('address: open');
+				events.emit(Events.ORDER_OPEN);
 			});
 		}
 
@@ -34,27 +33,26 @@ export class Basket extends Component<IBasket> {
 		
 	}
 
+	toggleButton(state: boolean) {
+		this.setDisabled(this._button, state);
+	}
+
 	set items(items: HTMLElement[]) {
-		if (items.length > 0) {
+		if (items.length) {
 			this._list.replaceChildren(...items);
+			this.toggleButton(false);
 		} else {
 			this._list.replaceChildren(
 				createElement<HTMLParagraphElement>('p', {
 					textContent: 'Ваша корзина пуста',
 				})
 			);
+			this.toggleButton(true);
 		}
 	}
-	set selected(items: number) {
-        if ( items === 0 ) {
-            this.setDisabled(this._button, true);
-        } else {
-            this.setDisabled(this._button, false);
-        }
-    }
 
 	set total(total: number) {
-		this._total.textContent = priceString(total);
+		this.setText(this._total, total.toString() + ' синапсов');
 	}
 
 }
