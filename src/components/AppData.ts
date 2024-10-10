@@ -44,7 +44,7 @@ export class AppState extends Model<IAppState> {
 		return this.catalog.filter(item => this.basket.has(item.id));
 	}
 
-	setBasketPreview(item: IProductItem) {
+	setPreview(item: IProductItem) {
 		this.preview = item.id;
 		this.emitChanges('product:changed-preview', item);
 		};
