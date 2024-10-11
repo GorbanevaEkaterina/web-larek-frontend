@@ -1,8 +1,8 @@
-import {Component} from "../base/Component";
-import {ensureElement} from "../../utils/utils";
+import { Component } from '../base/Component';
+import { ensureElement } from '../../utils/utils';
 
 interface ISuccess {
-    title: string;
+	title: string;
 	description: string;
 }
 
@@ -12,13 +12,16 @@ export interface ISuccessActions {
 
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;
-    protected _title: HTMLElement;
+	protected _title: HTMLElement;
 	protected _description: HTMLElement;
 
 	constructor(container: HTMLElement, actions: ISuccessActions) {
 		super(container);
-		this._close = ensureElement<HTMLElement>('.order-success__close', this.container);
-        this._title = ensureElement<HTMLElement>(
+		this._close = ensureElement<HTMLElement>(
+			'.order-success__close',
+			this.container
+		);
+		this._title = ensureElement<HTMLElement>(
 			'.order-success__title',
 			this.container
 		);
@@ -27,9 +30,9 @@ export class Success extends Component<ISuccess> {
 			this.container
 		);
 
-        if (actions?.onClick) {
-            this._close.addEventListener('click', actions.onClick);
-        }
+		if (actions?.onClick) {
+			this._close.addEventListener('click', actions.onClick);
+		}
 	}
 
 	set title(value: string) {

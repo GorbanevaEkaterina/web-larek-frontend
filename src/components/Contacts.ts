@@ -1,7 +1,6 @@
-import { Form } from './common/Form'
-import {IOrder } from '../types';
+import { Form } from './common/Form';
+import { IOrder } from '../types';
 import { IEvents } from './base/events';
-
 
 export class Contacts extends Form<IOrder> {
 	protected _inputPhone: HTMLInputElement;
@@ -10,8 +9,12 @@ export class Contacts extends Form<IOrder> {
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this._inputPhone = container.querySelector<HTMLInputElement>('input[name="phone"]');
-		this._inputEmail = container.querySelector<HTMLInputElement>('input[name="email"]');
+		this._inputPhone = container.querySelector<HTMLInputElement>(
+			'input[name="phone"]'
+		);
+		this._inputEmail = container.querySelector<HTMLInputElement>(
+			'input[name="email"]'
+		);
 	}
 
 	set phone(value: string) {

@@ -1,7 +1,6 @@
 import { Form } from './common/Form';
-import { Events,IOrder } from '../types';
+import { Events, IOrder } from '../types';
 import { IEvents } from './base/events';
-
 
 export class UserDataForm extends Form<IOrder> {
 	protected _onlineButton: HTMLButtonElement;
@@ -11,13 +10,22 @@ export class UserDataForm extends Form<IOrder> {
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
 
-		this._onlineButton = container.querySelector<HTMLButtonElement>('button[name="card"]');
-		this._cashButton = container.querySelector<HTMLButtonElement>('button[name="cash"]');
-		this._addressInput = container.querySelector<HTMLInputElement>('input[name="address"]');
+		this._onlineButton = container.querySelector<HTMLButtonElement>(
+			'button[name="card"]'
+		);
+		this._cashButton = container.querySelector<HTMLButtonElement>(
+			'button[name="cash"]'
+		);
+		this._addressInput = container.querySelector<HTMLInputElement>(
+			'input[name="address"]'
+		);
 
-		this._onlineButton.addEventListener('click', () => this.togglePaymentMethod('card'));
-		this._cashButton.addEventListener('click', () => this.togglePaymentMethod('cash'));
-			
+		this._onlineButton.addEventListener('click', () =>
+			this.togglePaymentMethod('card')
+		);
+		this._cashButton.addEventListener('click', () =>
+			this.togglePaymentMethod('cash')
+		);
 	}
 	toggleCard(state: boolean = true) {
 		this.toggleClass(this._onlineButton, 'button_alt-active', state);
@@ -28,8 +36,10 @@ export class UserDataForm extends Form<IOrder> {
 	}
 
 	togglePaymentMethod(selectedPayment: string) {
-		const isCardActive = this._onlineButton.classList.contains('button_alt-active');
-		const isCashActive = this._cashButton.classList.contains('button_alt-active');
+		const isCardActive =
+			this._onlineButton.classList.contains('button_alt-active');
+		const isCashActive =
+			this._cashButton.classList.contains('button_alt-active');
 
 		if (selectedPayment === 'card') {
 			this.toggleCard(!isCardActive);
@@ -54,5 +64,4 @@ export class UserDataForm extends Form<IOrder> {
 	set payment(value: string) {
 		this.events.emit(Events.SET_PAYMENT_METHOD, { paymentType: value });
 	}
-	
 }

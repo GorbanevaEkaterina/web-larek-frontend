@@ -1,4 +1,4 @@
-import { createElement, ensureElement} from '../../utils/utils';
+import { createElement, ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/events';
 import { Events } from '../../types/index';
@@ -30,7 +30,6 @@ export class Basket extends Component<IBasket> {
 		}
 
 		this.items = [];
-		
 	}
 
 	toggleButton(state: boolean) {
@@ -54,5 +53,4 @@ export class Basket extends Component<IBasket> {
 	set total(total: number) {
 		this.setText(this._total, total.toString() + ' синапсов');
 	}
-
 }

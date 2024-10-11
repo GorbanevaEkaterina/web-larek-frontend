@@ -1,19 +1,18 @@
-
 // модель продукта(товара) *
 export interface IProductItem {
-    id: string;
-    description: string;
-    image: string;
-    title: string;
-    category: string;
-    price: number | null;
+	id: string;
+	description: string;
+	image: string;
+	title: string;
+	category: string;
+	price: number | null;
 	status: boolean;
 }
 // заказ оформлен *
 export interface IOrderResult {
-    id: string[];
-    total: number;
-    error?: string;
+	id: string[];
+	total: number;
+	error?: string;
 }
 // список продуктов *
 export interface IProducts {
@@ -22,21 +21,21 @@ export interface IProducts {
 }
 // главная страница *
 export interface IPage {
-    counter: number;
+	counter: number;
 	catalog: HTMLElement[];
-    locked: boolean;
+	locked: boolean;
 }
 // главная страница отображение *
 export interface IAppState {
-    catalog: IProductItem[];
+	catalog: IProductItem[];
 	basket: Set<string>;
 	order: IOrder | null;
 	preview: string | null;
 }
 //  запросы *
 export interface IWebStoreApi {
-    getProductList: () => Promise<IProducts>;
-    getProductItem: (id: string) => Promise<IProductItem>;
+	getProductList: () => Promise<IProducts>;
+	getProductItem: (id: string) => Promise<IProductItem>;
 	orderProducts: (order: IOrder) => Promise<IOrderResult>;
 }
 
@@ -54,29 +53,18 @@ export enum Events {
 	ORDER_CLEAR = 'order:clear',
 	SET_PAYMENT_METHOD = 'order:set-payment-method',
 	MODAL_OPEN = 'modal:open',
-	MODAL_CLOSE = 'modal:close'
+	MODAL_CLOSE = 'modal:close',
 }
-
-
-
-
 
 // данные заказа *
 export interface IOrder {
-    payment: string | null;
+	payment: string | null;
 	email: string;
 	phone: string;
 	address: string;
 	total: number;
 	items: string[];
 }
-
-
-
-
-
-
-
 
 //ошибки *
 export type FormErrors = {

@@ -28,10 +28,13 @@ export class Modal extends Component<IModalData> {
 		this._content.addEventListener('click', (event) => event.stopPropagation());
 	}
 	private handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Escape' && this.container.classList.contains('modal_active')) {
+		if (
+			event.key === 'Escape' &&
+			this.container.classList.contains('modal_active')
+		) {
 			this.close();
 		}
-	}	
+	};
 
 	set content(value: HTMLElement) {
 		this._content.replaceChildren(value);

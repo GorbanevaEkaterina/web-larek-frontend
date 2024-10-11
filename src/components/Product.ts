@@ -1,5 +1,4 @@
-
-import { ensureElement} from '../utils/utils';
+import { ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
 import { ItemCategory } from '../types/index';
 
@@ -24,7 +23,6 @@ export class Product<T> extends Component<IProduct<T>> {
 	protected _category: HTMLElement;
 	protected _button: HTMLButtonElement;
 	protected _description: HTMLElement;
-	
 
 	constructor(
 		protected blockName: string,
@@ -39,7 +37,6 @@ export class Product<T> extends Component<IProduct<T>> {
 		this._category = container.querySelector(`.${blockName}__category`);
 		this._button = container.querySelector('button');
 		this._description = container.querySelector(`.${blockName}__description`);
-		
 
 		if (actions?.onClick) {
 			if (this._button) {
@@ -58,7 +55,6 @@ export class Product<T> extends Component<IProduct<T>> {
 		return this.container.dataset.id || '';
 	}
 
-	
 	set title(value: string) {
 		this.setText(this._title, value);
 	}
@@ -103,7 +99,6 @@ export class Product<T> extends Component<IProduct<T>> {
 			this.setText(this._description, value);
 		}
 	}
-	
 }
 export type CatalogItemStatus = {
 	status: boolean;
@@ -113,7 +108,6 @@ export class CatalogItem extends Product<CatalogItemStatus> {
 		super('card', container, actions);
 		this._image = ensureElement<HTMLImageElement>(`.card__image`, container);
 	}
-
 
 	toggleButton(state: boolean) {
 		this.setDisabled(this._button, state);

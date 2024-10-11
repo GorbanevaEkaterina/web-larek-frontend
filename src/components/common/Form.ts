@@ -19,7 +19,7 @@ export class Form<T> extends Component<IFormState> {
 			this.container
 		);
 		this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
-		
+
 		this.container.addEventListener('input', (e: Event) => {
 			const target = e.target as HTMLInputElement;
 			const field = target.name as keyof T;
@@ -31,7 +31,6 @@ export class Form<T> extends Component<IFormState> {
 			e.preventDefault();
 			this.events.emit(`${this.container.name}:submit`);
 		});
-		
 	}
 	protected onInputChange(field: keyof T, value: string) {
 		this.events.emit(`${this.container.name}.${String(field)}:change`, {
