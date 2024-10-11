@@ -81,15 +81,22 @@ export class AppState extends Model<IAppState> {
 
 		// Проверка для полей email и phone
 		if (field === 'email' || field === 'phone') {
-			const emailError = !this.order.email.match(/^\S+@\S+\.\S+$/)
+			// полноценная проверка почты
+			// const emailError = !this.order.email.match(/^\S+@\S+\.\S+$/)
+			// 	? 'email'
+			// 	: '';
+			const emailError = !this.order.email.match(/^\S*$/)
 				? 'email'
 				: '';
-			const phoneError = !this.order.phone.match(
-				/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$|^8\d{10}$/
-			)
+			// полноценная проверка телефона	
+			// const phoneError = !this.order.phone.match(
+			// 	/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$|^8\d{10}$/
+			// )
+			// 	? 'телефон'
+			// 	: '';
+			const phoneError = !this.order.phone.match(/^\S*$/)
 				? 'телефон'
 				: '';
-
 			if (emailError && phoneError) {
 				errors.email = `Необходимо указать ${emailError} и ${phoneError}`;
 			} else if (emailError) {
