@@ -8,11 +8,7 @@ import { Page } from './components/Page';
 import { cloneTemplate, ensureElement, createElement } from './utils/utils';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
-import {
-	IOrder,
-	IProductItem,
-	Events
-} from './types';
+import { IOrder, IProductItem, Events } from './types';
 
 import { BasketItem, CatalogItem } from './components/Product';
 import { UserDataForm } from './components/Order';
@@ -28,7 +24,6 @@ const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
-
 const events = new EventEmitter();
 const api = new WebStoreApi(API_URL);
 const appData = new AppState({}, events);
@@ -39,19 +34,26 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemlate), events);
 const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
 const userDataForm = new UserDataForm(cloneTemplate(orderTemplate), events);
+
+const success = new Success(cloneTemplate(successTemplate), {
+	onClick: () => {
+		modal.close();
+		events.emit(Events.ORDER_CLEAR);
+	},
+});
+
 // Чтобы мониторить все события, для отладки
 events.onAll(({ eventName, data }) => {
 	console.log(eventName, data);
 });
 
-
 //Бизнес-логика
 
 //1. Get запрос на получение всех продуктов магазина.
 api
-.getProductList()
-.then(appData.setCatalog.bind(appData))
-.catch(console.error);
+	.getProductList()
+	.then(appData.setCatalog.bind(appData))
+	.catch(console.error);
 //2. Обрабатываем событие, которое выводит(отображает) карточки продуктов на главной странице.
 events.on<CatalogChangeEvent>(Events.ITEMS_CHANGED, () => {
 	page.catalog = appData.catalog.map((item) => {
@@ -141,7 +143,7 @@ events.on(Events.REMOVE_PRODUCT, (item: IProductItem) => {
 	appData.removeBasket(item);
 });
 
-//8.работа с формой заказа 
+//8.работа с формой заказа
 events.on(/(^order|^contacts):submit/, () => {
 	if (!appData.order.email || !appData.order.address || !appData.order.phone)
 		return events.emit(Events.ORDER_OPEN);
@@ -155,26 +157,19 @@ events.on(/(^order|^contacts):submit/, () => {
 			total: appData.getTotalPrice(),
 		})
 		.then((result) => {
-			const success = new Success(cloneTemplate(successTemplate), {
-				onClick: () => {
-					modal.close();
-					events.emit(Events.ORDER_CLEAR);
-				},
-			});
-
 			modal.render({
 				content: success.render({
 					title: !result.error ? 'Заказ оформлен' : 'Ошибка оформления заказа',
-					description: !result.error ? `Списано ${result.total} синапсов` : result.error,
+					description: !result.error
+						? `Списано ${result.total} синапсов`
+						: result.error,
 				}),
 			});
 		})
 		.catch((err) => {
 			console.error(err);
 		})
-		.finally(() => {
-			events.emit(Events.ORDER_CLEAR);
-		});
+		.finally(() => {});
 });
 
 //9.очистка корзины после отправки заказа
@@ -208,27 +203,26 @@ events.on(
 //12.Открыть форму заказа
 events.on(Events.ORDER_OPEN, () => {
 	if (!appData.order.address && !appData.order.payment) {
-		const data = { address: '' }
+		const data = { address: '' };
 		modal.render({
 			content: userDataForm.render({
 				valid: false,
 				errors: [],
-				...data
+				...data,
 			}),
 		});
 	} else {
-		const data = { phone: '', email: '' }
+		const data = { phone: '', email: '' };
 		modal.render({
 			content: contacts.render({
 				valid: false,
 				errors: [],
-				...data
+				...data,
 			}),
 		});
 	}
 });
 
 events.on(Events.SET_PAYMENT_METHOD, (data: { paymentType: string }) => {
-	appData.setOrderField('payment'	, data.paymentType);
+	appData.setOrderField('payment', data.paymentType);
 });
-

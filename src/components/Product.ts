@@ -23,6 +23,13 @@ export class Product<T> extends Component<IProduct<T>> {
 	protected _category: HTMLElement;
 	protected _button: HTMLButtonElement;
 	protected _description: HTMLElement;
+	protected _categoryColor = new Map<string, string>([
+		['софт-скил', '_soft'],
+		['хард-скил', '_hard'],
+		['кнопка', '_button'],
+		['другое', '_other'],
+		['дополнительное', '_additional'],
+	]);
 
 	constructor(
 		protected blockName: string,
@@ -62,12 +69,13 @@ export class Product<T> extends Component<IProduct<T>> {
 	get title(): string {
 		return this._title.textContent || '';
 	}
-	set category(value: keyof typeof ItemCategory) {
-		if (this._category) {
-			this.setText(this._category, value);
-			const categoryStyle = `card__category_${ItemCategory[value]}`;
-			this._category.classList.add(categoryStyle);
-		}
+	set category(value: string) {
+		this.setText(this._category, value);
+		this._category?.classList?.remove('card__category_soft');
+		this._category?.classList?.remove('card__category_other');
+		this._category?.classList?.add(
+			`card__category${this._categoryColor.get(value)}`
+		);
 	}
 
 	get category(): keyof typeof ItemCategory {

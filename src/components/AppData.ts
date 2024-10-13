@@ -1,4 +1,5 @@
 import { Model } from './base/Model';
+import { IEvents } from './base/events';
 import { FormErrors, IOrder, IProductItem, IAppState, Events } from '../types';
 export type CatalogChangeEvent = {
 	catalog: IProductItem[];
@@ -16,7 +17,7 @@ export class AppState extends Model<IAppState> {
 	};
 	preview: string | null;
 	formErrors: FormErrors = {};
-
+	
 	setCatalog(data: { items: IProductItem[]; total: number }) {
 		const { items } = data;
 		this.catalog = [...items];
@@ -34,8 +35,8 @@ export class AppState extends Model<IAppState> {
 		if (this.basket.has(item.id)) {
 			this.basket.delete(item.id);
 			this.emitChanges(Events.BASKET_OPEN, { catalog: this.catalog });
-			this.emitChanges(Events.ITEMS_CHANGED, { catalog: this.catalog });
-		}
+			
+			}
 	}
 	getBasket() {
 		return this.catalog.filter((item) => this.basket.has(item.id));
@@ -82,27 +83,16 @@ export class AppState extends Model<IAppState> {
 		// Проверка для полей email и phone
 		if (field === 'email' || field === 'phone') {
 			// полноценная проверка почты
-			// const emailError = !this.order.email.match(/^\S+@\S+\.\S+$/)
-			// 	? 'email'
-			// 	: '';
-			const emailError = !this.order.email.match(/^\S*$/)
-				? 'email'
-				: '';
+			const emailError = !this.order.email;
 			// полноценная проверка телефона	
-			// const phoneError = !this.order.phone.match(
-			// 	/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$|^8\d{10}$/
-			// )
-			// 	? 'телефон'
-			// 	: '';
-			const phoneError = !this.order.phone.match(/^\S*$/)
-				? 'телефон'
-				: '';
+			const phoneError = !this.order.phone;
+			
 			if (emailError && phoneError) {
-				errors.email = `Необходимо указать ${emailError} и ${phoneError}`;
+				errors.email = `Необходимо указать электронную почту и телефон`;
 			} else if (emailError) {
-				errors.email = `Необходимо указать ${emailError}`;
+				errors.email = `Необходимо указать электронную почту`;
 			} else if (phoneError) {
-				errors.phone = `Необходимо указать ${phoneError}`;
+				errors.phone = `Необходимо указать телефон`;
 			}
 		} else if (!this.order.address) errors.address = 'Необходимо указать адрес';
 		else if (!this.order.payment)
