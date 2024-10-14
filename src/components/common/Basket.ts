@@ -1,7 +1,7 @@
 import { createElement, ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/events';
-import { Events } from '../../types/index';
+
 
 interface IBasket {
 	items: HTMLElement[];
@@ -25,28 +25,24 @@ export class Basket extends Component<IBasket> {
 
 		if (this._button) {
 			this._button.addEventListener('click', () => {
-				events.emit(Events.ORDER_OPEN);
+				events.emit('order:open');
 			});
 		}
 
 		this.items = [];
 	}
 
-	toggleButton(state: boolean) {
-		this.setDisabled(this._button, state);
-	}
-
 	set items(items: HTMLElement[]) {
 		if (items.length) {
 			this._list.replaceChildren(...items);
-			this.toggleButton(false);
+			this.setDisabled(this._button, false);
 		} else {
 			this._list.replaceChildren(
 				createElement<HTMLParagraphElement>('p', {
 					textContent: 'Ваша корзина пуста',
 				})
 			);
-			this.toggleButton(true);
+			this.setDisabled(this._button, true);
 		}
 	}
 

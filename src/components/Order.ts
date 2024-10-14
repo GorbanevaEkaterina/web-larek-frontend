@@ -1,11 +1,11 @@
 import { Form } from './common/Form';
-import { Events, IOrder } from '../types';
+import {  IOrder } from '../types';
 import { IEvents } from './base/events';
 
-export class UserDataForm extends Form<IOrder> {
+export class Order extends Form<IOrder> {
 	protected _onlineButton: HTMLButtonElement;
 	protected _cashButton: HTMLButtonElement;
-	protected _addressInput: HTMLInputElement;
+	
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
@@ -16,52 +16,24 @@ export class UserDataForm extends Form<IOrder> {
 		this._cashButton = container.querySelector<HTMLButtonElement>(
 			'button[name="cash"]'
 		);
-		this._addressInput = container.querySelector<HTMLInputElement>(
-			'input[name="address"]'
-		);
-
-		this._onlineButton.addEventListener('click', () =>
-			this.togglePaymentMethod('card')
-		);
-		this._cashButton.addEventListener('click', () =>
-			this.togglePaymentMethod('cash')
-		);
+	
+		this._onlineButton.addEventListener('click', () => {
+			this.payment = 'card';
+			this.onInputChange('payment', 'card');
+		});
+		this._cashButton.addEventListener('click', () => {
+			this.payment = 'cash';
+			this.onInputChange('payment', 'cash');
+		});
 	}
-	toggleCard(state: boolean = true) {
-		this.toggleClass(this._onlineButton, 'button_alt-active', state);
-	}
-
-	toggleCash(state: boolean = true) {
-		this.toggleClass(this._cashButton, 'button_alt-active', state);
-	}
-
-	togglePaymentMethod(selectedPayment: string) {
-		const isCardActive =
-			this._onlineButton.classList.contains('button_alt-active');
-		const isCashActive =
-			this._cashButton.classList.contains('button_alt-active');
-
-		if (selectedPayment === 'card') {
-			this.toggleCard(!isCardActive);
-			this.payment = isCardActive ? null : 'card';
-			if (!isCardActive) this.toggleCash(false);
-		} else if (selectedPayment === 'cash') {
-			this.toggleCash(!isCashActive);
-			this.payment = isCashActive ? null : 'cash';
-			if (!isCashActive) this.toggleCard(false);
-		}
-	}
-
-	resetPaymentButtons() {
-		this.toggleCard(false);
-		this.toggleCash(false);
-	}
+	
 
 	set address(value: string) {
-		this._addressInput.value = value;
+		(this.container.elements.namedItem('address') as HTMLInputElement).value = value;
 	}
 
 	set payment(value: string) {
-		this.events.emit(Events.SET_PAYMENT_METHOD, { paymentType: value });
+		this._onlineButton.classList.toggle('button_alt-active', value === 'card');
+		this._cashButton.classList.toggle('button_alt-active', value === 'cash');
 	}
 }

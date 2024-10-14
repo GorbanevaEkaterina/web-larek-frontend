@@ -1,22 +1,12 @@
 import { ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
-import { ItemCategory } from '../types/index';
+import { IProductItem, ItemCategory } from '../types/index';
 
 interface IProductActions {
 	onClick: (event: MouseEvent) => void;
 }
 
-export interface IProduct<T> {
-	index: number;
-	title: string;
-	description: string;
-	price: string;
-	image: string;
-	category: string;
-	status: T;
-}
-
-export class Product<T> extends Component<IProduct<T>> {
+export class Product extends Component<IProductItem> {
 	protected _title: HTMLElement;
 	protected _price: HTMLElement;
 	protected _image: HTMLImageElement;
@@ -107,46 +97,7 @@ export class Product<T> extends Component<IProduct<T>> {
 			this.setText(this._description, value);
 		}
 	}
-}
-export type CatalogItemStatus = {
-	status: boolean;
-};
-export class CatalogItem extends Product<CatalogItemStatus> {
-	constructor(container: HTMLElement, actions?: IProductActions) {
-		super('card', container, actions);
-		this._image = ensureElement<HTMLImageElement>(`.card__image`, container);
-	}
-
-	toggleButton(state: boolean) {
-		this.setDisabled(this._button, state);
-	}
-
-	set status({ status }: CatalogItemStatus) {
-		if (this._button) {
-			if (this.price === null) {
-				this.setText(this._button, 'Недоступно');
-				this.toggleButton(true);
-			} else {
-				this.setText(this._button, status ? 'Уже в корзине' : 'В корзину');
-				this.toggleButton(status);
-			}
-		}
-	}
-}
-
-export type BasketItemStatus = {
-	index: number;
-};
-
-export class BasketItem extends Product<BasketItemStatus> {
-	protected _index: HTMLElement;
-
-	constructor(container: HTMLElement, actions?: IProductActions) {
-		super('card', container, actions);
-		this._index = ensureElement<HTMLElement>(`.basket__item-index`, container);
-	}
-
-	set index(value: number) {
-		this.setText(this._index, value.toString());
+	set button(value: string) {
+		this.setText(this._button, value);
 	}
 }

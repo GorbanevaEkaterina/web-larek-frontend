@@ -2,7 +2,6 @@ import { Api } from './base/api';
 import {
 	IWebStoreApi,
 	IProductItem,
-	IProducts,
 	IOrderResult,
 	IOrder,
 } from '../types';
@@ -17,8 +16,8 @@ export default class WebStoreApi extends Api implements IWebStoreApi {
 		return (await this.get(`/product/${id}`)) as IProductItem;
 	}
 
-	async getProductList(): Promise<IProducts> {
-		return (await this.get('/product/')) as IProducts;
+	async getProductList(): Promise<IProductItem[]> {
+		return (await this.get('/product/')) as IProductItem[];
 	}
 
 	async orderProducts(order: IOrder): Promise<IOrderResult> {
