@@ -1,26 +1,39 @@
-import { Api } from './base/api';
+import { Api, ApiListResponse } from './base/api';
 import {
-	IWebStoreApi,
 	IProductItem,
 	IOrderResult,
 	IOrder,
 } from '../types';
-
+export interface IWebStoreApi {
+	getProductList: () => Promise<IProductItem[]>;
+	getProductItem: (id: string) => Promise<IProductItem>;
+	orderProducts: (order: IOrder) => Promise<IOrderResult>;
+}
 export default class WebStoreApi extends Api implements IWebStoreApi {
 	readonly cdn: string;
 
-	constructor(baseUrl: string, options?: RequestInit) {
+	constructor(cdn: string, baseUrl: string, options?: RequestInit) {
 		super(baseUrl, options);
-	}
-	async getProductItem(id: string): Promise<IProductItem> {
-		return (await this.get(`/product/${id}`)) as IProductItem;
+		this.cdn = cdn;
 	}
 
-	async getProductList(): Promise<IProductItem[]> {
-		return (await this.get('/product/')) as IProductItem[];
+	getProductList(): Promise<IProductItem[]> {
+		return this.get('/product').then((data: ApiListResponse<IProductItem>) =>
+			data.items.map((item) => ({
+				...item,
+				image: this.cdn + item.image,
+			}))
+		);
 	}
 
-	async orderProducts(order: IOrder): Promise<IOrderResult> {
-		return (await this.post('/order', order)) as IOrderResult;
+	getProductItem(id: string): Promise<IProductItem> {
+		return this.get(`/product/${id}`).then((item: IProductItem) => ({
+			...item,
+			image: this.cdn + item.image,
+		}));
+	}
+
+	orderProducts(order: IOrder): Promise<IOrderResult> {
+		return this.post('/order', order).then((data: IOrderResult) => data);
 	}
 }

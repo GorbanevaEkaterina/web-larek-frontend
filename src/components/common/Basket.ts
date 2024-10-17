@@ -1,19 +1,18 @@
 import { createElement, ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/events';
+import { IBasket } from '../../types';
 
 
-interface IBasket {
-	items: HTMLElement[];
-	total: number;
-}
+
 
 export class Basket extends Component<IBasket> {
+	static template = ensureElement<HTMLTemplateElement>('#basket');
 	protected _list: HTMLElement;
 	protected _total: HTMLElement;
 	protected _button: HTMLButtonElement;
 
-	constructor(container: HTMLElement, protected events: EventEmitter) {
+	constructor(container: HTMLTemplateElement, protected events: EventEmitter) {
 		super(container);
 
 		this._list = ensureElement<HTMLElement>('.basket__list', this.container);

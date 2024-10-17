@@ -1,23 +1,21 @@
 import { Component } from '../base/Component';
 import { ensureElement } from '../../utils/utils';
-import { IOrderResult } from '../../types';
+import { IOrderResult, ISuccess } from '../../types';
 
-interface ISuccess {
-	title: string;
-	description: string;
-}
+
 
 export interface ISuccessActions {
 	onClick: () => void;
 }
 
-export class Success extends Component<IOrderResult> {
+export class Success extends Component<ISuccess> {
 	protected _close: HTMLButtonElement;
 	protected _total: HTMLElement;
 	
 
 	constructor(container: HTMLFormElement, actions?: ISuccessActions) {
 		super(container);
+		
 		this._close = ensureElement<HTMLButtonElement>(
 			'.order-success__close',
 			this.container

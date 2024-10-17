@@ -2,10 +2,10 @@ import { Form } from './common/Form';
 import {  IOrder } from '../types';
 import { IEvents } from './base/events';
 
-export class Order extends Form<IOrder> {
+export class Order extends Form<Partial<IOrder>> {
 	protected _onlineButton: HTMLButtonElement;
 	protected _cashButton: HTMLButtonElement;
-	
+	protected _address: HTMLInputElement;
 
 	constructor(container: HTMLFormElement, events: IEvents) {
 		super(container, events);
@@ -16,6 +16,8 @@ export class Order extends Form<IOrder> {
 		this._cashButton = container.querySelector<HTMLButtonElement>(
 			'button[name="cash"]'
 		);
+
+		this._address = container.elements.namedItem('address') as HTMLInputElement;
 	
 		this._onlineButton.addEventListener('click', () => {
 			this.payment = 'card';
@@ -29,7 +31,7 @@ export class Order extends Form<IOrder> {
 	
 
 	set address(value: string) {
-		(this.container.elements.namedItem('address') as HTMLInputElement).value = value;
+		this._address.value = value;
 	}
 
 	set payment(value: string) {

@@ -8,31 +8,46 @@ export interface IProductItem {
 	price: number | null;
 }
 
+export interface IAppState {
+    catalog: IProductItem[];
+    preview: string | null;
+    order: IOrder | null;
+	formErrors: FormErrors;
+	basket: IProductItem[];
+
+}
+
 // главная страница 
 export interface IPage {
 	counter: number;
 	catalog: HTMLElement[];
 	locked: boolean;
+	basket: HTMLElement;
 }
 
 // корзина
 export interface IBasket {
-	total: number;
-	items: HTMLElement[];
+	items: IProductItem[];
+}
+
+export interface IFormState {
+	valid: boolean;
+	errors: string[];
 }
 
 // данные заказа 
-export interface IOrder extends IContactsForm {
-	payment: PaymentMethod;
+export interface IOrder {
+	payment: string;
 	email: string;
 	phone: string;
 	address: string;
-	items: [],
 	
 }
 
-export type PaymentMethod = 'cash' | 'card';
 
+export interface IProductActions {
+	onClick: (event: MouseEvent) => void;
+}
 
 // заказ оформлен 
 export interface IOrderResult {
@@ -41,28 +56,18 @@ export interface IOrderResult {
 	
 }
 
-export type OrderForm = Omit<IOrder, 'total' | 'items'>;
 
-export interface IContacts extends IContactsForm {
-	items: string[];
+
+
+
+
+
+export interface ISuccess {
+	total: number;
 }
-
-export interface IContactsForm {
-	email: string;
-	phone: string;
-}
-
-//  запросы 
-export interface IWebStoreApi {
-	getProductList: () => Promise<IProductItem[]>;
-	getProductItem: (id: string) => Promise<IProductItem>;
-	orderProducts: (order: IOrder) => Promise<IOrderResult>;
-}
-
 // ошибки
 
-export type FormErrorsOrder = Partial<Record<keyof IOrder, string>>;
-export type FormErrorsContacts = Partial<Record<keyof IContacts, string>>;
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 //перечень категорий товаров 
 export enum ItemCategory {
@@ -74,3 +79,19 @@ export enum ItemCategory {
 }
 	
 
+export interface IProduct {
+	id: string;
+	description?: string;
+	image?: string;
+	title: string;
+	category?: string;
+	price: number | null;
+	buttonText?: string;
+	selected?: boolean;
+}
+
+export interface IBasketProduct {
+	title: string;
+	price: number | null;
+	index: number;
+}

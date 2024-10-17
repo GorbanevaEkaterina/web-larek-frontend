@@ -1,8 +1,8 @@
 import { Form } from './common/Form';
-import { OrderForm } from '../types';
+import { IOrder } from '../types';
 import { IEvents } from './base/events';
 
-export class Contacts extends Form<OrderForm> {
+export class Contacts extends Form<Partial<IOrder>>{
 	protected _inputPhone: HTMLInputElement;
 	protected _inputEmail: HTMLInputElement;
 
