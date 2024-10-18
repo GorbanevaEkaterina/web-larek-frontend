@@ -23,6 +23,7 @@ export interface IPage {
 	catalog: HTMLElement[];
 	locked: boolean;
 	basket: HTMLElement;
+	wrapper: HTMLElement;
 }
 
 // корзина
@@ -55,7 +56,7 @@ export interface IOrderResult {
 	total: number;
 	
 }
-
+export type PaymentMethod = 'cash' | 'card';
 
 
 
@@ -87,6 +88,7 @@ export interface IProduct {
 	category?: string;
 	price: number | null;
 	buttonText?: string;
+	index?: number;
 	selected?: boolean;
 }
 

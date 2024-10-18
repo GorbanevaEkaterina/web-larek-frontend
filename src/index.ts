@@ -35,11 +35,11 @@ const basket = new Basket(cloneTemplate(basketTemlate), events);
 const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
 
-// const success = new Success(cloneTemplate(successTemplate), {
-// 	onClick: () => {
-// 		modal.close();
-// 	},
-// });
+const success = new Success(cloneTemplate(successTemplate), {
+	onClick: () => {
+		modal.close();
+	},
+});
 
 // Чтобы мониторить все события, для отладки
 events.onAll(({ eventName, data }) => {
@@ -56,7 +56,7 @@ api
 	})
 	.catch(console.error);
 
-	// 3.превью карточки
+// 	// 3.превью карточки
 // events.on('card:select', (item: IProductItem) => {
 // 	appData.setPreview(item);
 // });
@@ -94,7 +94,7 @@ events.on('card:select', (item: IProductItem) => {
 	const product = new CatalogProdactsView(cloneTemplate(cardPreviewTemplate), {
 		onClick: () => {
 			if (productInBasket) {
-				events.emit('card:deleteFromBasketView', item);
+				events.emit('card:deleteFromBasket', item);
 			} else {
 				events.emit('card:toBasket', item);
 			}
@@ -113,3 +113,41 @@ events.on('card:select', (item: IProductItem) => {
 	});
 })
 
+events.on('basket:changed', () => {
+	basket.total = appData.getTotalBasket();
+
+	basket.items = appData.basket.map((item, index) => {
+		const basketProduct = new BasketProduct(cloneTemplate(cardBasketTemplate), {
+			onClick: () => {
+				events.emit('card:deleteFromBasket', item);
+			},
+		});
+
+		return basketProduct.render({
+			title: item.title,
+			price: item.price,
+			index: index + 1,
+		});
+	});
+});
+
+events.on('card:toBasket', (item: IProductItem) => {
+	appData.addBasket(item);
+	events.emit('сounter:change');
+	modal.close();
+});
+
+events.on('card:deleteFromBasket', (item: IProductItem) => {
+	appData.removeBasket(item);
+	events.emit('сounter:change');
+});
+
+events.on('сounter:change', () => {
+	page.counter = appData.getBasketCount();
+});
+
+events.on('basket:open', () => {
+	modal.render({
+		content: basket.render(),
+	});
+});

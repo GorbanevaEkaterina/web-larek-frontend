@@ -27,10 +27,12 @@ export class Basket extends Component<IBasket> {
 				events.emit('order:open');
 			});
 		}
-
+		
 		this.items = [];
 	}
-
+	protected disableButton(disabled: boolean){
+		this.setDisabled(this._button, disabled);
+	}
 	set items(items: HTMLElement[]) {
 		if (items.length) {
 			this._list.replaceChildren(...items);
