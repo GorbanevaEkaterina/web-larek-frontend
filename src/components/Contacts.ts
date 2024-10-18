@@ -2,7 +2,7 @@ import { Form } from './common/Form';
 import { IOrder } from '../types';
 import { IEvents } from './base/events';
 
-export class Contacts extends Form<Partial<IOrder>>{
+export class Contacts extends Form<Partial<IOrder>> {
 	protected _inputPhone: HTMLInputElement;
 	protected _inputEmail: HTMLInputElement;
 

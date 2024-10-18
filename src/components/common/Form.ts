@@ -1,9 +1,7 @@
-
 import { IEvents } from '../base/events';
 import { ensureElement } from '../../utils/utils';
-import {IFormState} from '../../types/index'
+import { IFormState } from '../../types/index';
 import { Component } from '../base/Component';
-
 
 export class Form<T> extends Component<IFormState> {
 	protected _submit: HTMLButtonElement;
@@ -51,5 +49,4 @@ export class Form<T> extends Component<IFormState> {
 		Object.assign(this, inputs);
 		return this.container;
 	}
-	
 }

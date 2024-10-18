@@ -7,7 +7,9 @@ import {
 export interface IWebStoreApi {
 	getProductList: () => Promise<IProductItem[]>;
 	getProductItem: (id: string) => Promise<IProductItem>;
-	orderProducts: (order: IOrder) => Promise<IOrderResult>;
+	orderProducts: (order: IOrder,
+		total: number,
+		items: string[]) => Promise<Partial<IOrderResult>>;
 }
 export default class WebStoreApi extends Api implements IWebStoreApi {
 	readonly cdn: string;
@@ -33,7 +35,11 @@ export default class WebStoreApi extends Api implements IWebStoreApi {
 		}));
 	}
 
-	orderProducts(order: IOrder): Promise<IOrderResult> {
-		return this.post('/order', order).then((data: IOrderResult) => data);
+	orderProducts(order: IOrder,
+		total: number,
+		items: string[]
+	): Promise<Partial<IOrderResult>> {
+		const data = { ...order, total, items };
+		return this.post('/order', data);
 	}
 }

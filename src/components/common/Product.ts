@@ -8,10 +8,7 @@ export class Product extends Component<IProduct> {
 	protected _price: HTMLElement;
 	protected _button?: HTMLButtonElement;
 
-	constructor(
-		container: HTMLElement,
-		actions?: IProductActions,
-	) {
+	constructor(container: HTMLElement, actions?: IProductActions) {
 		super(container);
 
 		this._title = ensureElement<HTMLElement>('.card__title', container);
@@ -45,7 +42,7 @@ export class Product extends Component<IProduct> {
 
 	set buttonText(value: string) {
 		this._button.textContent = value;
-	  }
+	}
 
 	set price(value: number | null) {
 		if (value === null) {
@@ -53,7 +50,7 @@ export class Product extends Component<IProduct> {
 		} else {
 			this.setText(this._price, `${value} синапсов`);
 		}
-		
+
 		if (this._button && value === null) {
 			this._button.disabled = true;
 		}

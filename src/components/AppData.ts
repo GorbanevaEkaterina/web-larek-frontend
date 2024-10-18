@@ -42,12 +42,14 @@ export class AppState extends Model<IAppState>  {
 		return this.basket.some((item) => item.id === id);
 		
 	}
-
+	getProductIDs(): string[] {
+		return this.basket.map((item) => item.id);
+	}
 	
 
 	removeBasket(item: IProductItem) {
 		this.basket = this.basket.filter((id) => id != item);
-		this.emitChanges('basket:changed', { basket: this.basket });
+		this.emitChanges('basket:changed');
 	}
 	clearBasket() {
 		this.basket = [];
@@ -75,7 +77,7 @@ export class AppState extends Model<IAppState>  {
 			errors.address = 'Укажите адрес';
 		}
 		this.formErrors = errors;
-		this.events.emit('formOrderErrors:change', this.formErrors);
+		this.events.emit('orderErrors:change', this.formErrors);
 
 		return Object.keys(errors).length === 0;
 	}
@@ -100,7 +102,7 @@ export class AppState extends Model<IAppState>  {
 			errors.phone = 'Укажите телефон';
 		}
 		this.formErrors = errors;
-		this.events.emit('formErrorsContacts:change', this.formErrors);
+		this.events.emit('contactsErrors:change', this.formErrors);
 
 		return Object.keys(errors).length === 0;
 	}

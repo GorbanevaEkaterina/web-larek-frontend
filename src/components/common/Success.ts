@@ -2,8 +2,6 @@ import { Component } from '../base/Component';
 import { ensureElement } from '../../utils/utils';
 import { IOrderResult, ISuccess } from '../../types';
 
-
-
 export interface ISuccessActions {
 	onClick: () => void;
 }
@@ -11,16 +9,15 @@ export interface ISuccessActions {
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLButtonElement;
 	protected _total: HTMLElement;
-	
 
 	constructor(container: HTMLFormElement, actions?: ISuccessActions) {
 		super(container);
-		
+
 		this._close = ensureElement<HTMLButtonElement>(
 			'.order-success__close',
 			this.container
 		);
-		
+
 		this._total = ensureElement<HTMLElement>(
 			'.order-success__description',
 			this.container
@@ -28,8 +25,7 @@ export class Success extends Component<ISuccess> {
 
 		if (actions?.onClick) {
 			this._close.addEventListener('click', actions.onClick);
-		}
-		else {
+		} else {
 			container.addEventListener('click', actions.onClick);
 		}
 	}

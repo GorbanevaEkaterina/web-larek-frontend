@@ -1,7 +1,7 @@
 import { Form } from './common/Form';
-import {  IOrder } from '../types';
+import { IOrder } from '../types';
 import { IEvents } from './base/events';
-import {ensureElement} from '../utils/utils'
+import { ensureElement } from '../utils/utils';
 
 export class Order extends Form<Partial<IOrder>> {
 	protected _onlineButton: HTMLButtonElement;
@@ -18,11 +18,8 @@ export class Order extends Form<Partial<IOrder>> {
 			'button[name="cash"]'
 		);
 
-		this._address = ensureElement<HTMLInputElement>(
-			'input',
-			this.container
-		);
-	
+		this._address = ensureElement<HTMLInputElement>('input', this.container);
+
 		this._onlineButton.addEventListener('click', () => {
 			this.payment = 'card';
 			this.onInputChange('payment', 'card');
@@ -32,7 +29,6 @@ export class Order extends Form<Partial<IOrder>> {
 			this.onInputChange('payment', 'cash');
 		});
 	}
-	
 
 	set address(value: string) {
 		this._address.value = value;

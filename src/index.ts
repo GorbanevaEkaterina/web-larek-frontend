@@ -137,6 +137,7 @@ events.on('card:toBasket', (item: IProductItem) => {
 events.on('card:deleteFromBasket', (item: IProductItem) => {
 	appData.removeBasket(item);
 	events.emit('сounter:change');
+	modal.close();
 });
 
 events.on('сounter:change', () => {
@@ -160,7 +161,7 @@ events.on('order:open', () => {
 	});
 });
 
-events.on('formOrderErrors:change', (errors: Partial<IOrder>) => {
+events.on('orderErrors:change', (errors: Partial<IOrder>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
 	order.errors = Object.values({ payment, address })
@@ -170,7 +171,7 @@ events.on('formOrderErrors:change', (errors: Partial<IOrder>) => {
 
 events.on(
 	'input:change',
-	(data: { field: keyof IOrder; value: string }) => {
+	(data: { field: keyof IOrder ; value: string }) => {
 		appData.setOrderField(data.field, data.value);
 	}
 );
@@ -185,10 +186,32 @@ events.on('order:submit', () => {
 		}),
 	});
 });
-events.on('formErrorsContacts:change', (errors: Partial<IOrder>) => {
+events.on('contactsErrors:change', (errors: Partial<IOrder>) => {
 	const { email, phone } = errors;
 	contacts.valid = !email && !phone;
 	contacts.errors = Object.values({ email, phone })
 		.filter((i) => !!i)
 		.join('; ');
+});
+
+events.on('contacts:submit', () => {
+	const total = appData.getTotalBasket();
+	const items = appData.getProductIDs();
+
+	api
+		.orderProducts(appData.order, total, items)
+		.then((res) => {
+			appData.clearBasket();
+			appData.clearOrder();
+			events.emit('сounter:change');
+
+			modal.render({
+				content: success.render({
+					total: res.total,
+				}),
+			});
+		})
+		.catch((err) => {
+			console.error(err);
+		});
 });
