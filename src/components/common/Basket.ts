@@ -1,6 +1,6 @@
 import { createElement, ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
-import { EventEmitter } from '../base/events';
+import { IEvents } from '../base/events';
 import { IBasket } from '../../types';
 
 
@@ -12,15 +12,16 @@ export class Basket extends Component<IBasket> {
 	protected _total: HTMLElement;
 	protected _button: HTMLButtonElement;
 
-	constructor(container: HTMLTemplateElement, protected events: EventEmitter) {
+	constructor(container: HTMLTemplateElement, protected events?: IEvents) {
 		super(container);
 
 		this._list = ensureElement<HTMLElement>('.basket__list', this.container);
 		this._total = ensureElement<HTMLElement>('.basket__price', this.container);
 		this._button = ensureElement<HTMLButtonElement>(
-			'.basket__button',
+			'.button',
 			this.container
 		);
+		this.list = [];
 
 		if (this._button) {
 			this._button.addEventListener('click', () => {
@@ -28,26 +29,27 @@ export class Basket extends Component<IBasket> {
 			});
 		}
 		
-		this.items = [];
+		this.disableButton(true);
 	}
 	protected disableButton(disabled: boolean){
 		this.setDisabled(this._button, disabled);
 	}
-	set items(items: HTMLElement[]) {
+	set list(items: HTMLElement[]) {
 		if (items.length) {
 			this._list.replaceChildren(...items);
-			this.setDisabled(this._button, false);
+			this.disableButton(false);
 		} else {
 			this._list.replaceChildren(
 				createElement<HTMLParagraphElement>('p', {
 					textContent: 'Ваша корзина пуста',
 				})
 			);
-			this.setDisabled(this._button, true);
+			// this.disableButton(true);
 		}
 	}
 
 	set total(total: number) {
 		this.setText(this._total, total.toString() + ' синапсов');
+		
 	}
 }

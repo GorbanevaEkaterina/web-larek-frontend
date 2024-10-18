@@ -56,10 +56,7 @@ api
 	})
 	.catch(console.error);
 
-// 	// 3.превью карточки
-// events.on('card:select', (item: IProductItem) => {
-// 	appData.setPreview(item);
-// });
+
 
 //2. Обрабатываем событие, которое выводит(отображает) карточки продуктов на главной странице.
 events.on('catalog:changed',() => {
@@ -78,12 +75,12 @@ events.on('catalog:changed',() => {
 });
 
 //2.Блокируем прокрутку страницы если открыта модалка
-events.on('modal: open', () => {
+events.on('modal:open', () => {
 	page.locked = true;
 });
 
 // ... и разблокируем
-events.on('modal: close', () => {
+events.on('modal:close', () => {
 	page.locked = false;
 	
 });
@@ -116,7 +113,7 @@ events.on('card:select', (item: IProductItem) => {
 events.on('basket:changed', () => {
 	basket.total = appData.getTotalBasket();
 
-	basket.items = appData.basket.map((item, index) => {
+	basket.list = appData.basket.map((item, index) => {
 		const basketProduct = new BasketProduct(cloneTemplate(cardBasketTemplate), {
 			onClick: () => {
 				events.emit('card:deleteFromBasket', item);
@@ -150,4 +147,48 @@ events.on('basket:open', () => {
 	modal.render({
 		content: basket.render(),
 	});
+});
+
+events.on('order:open', () => {
+	modal.render({
+		content: order.render({
+			payment: appData.order.payment,
+			address: appData.order.address,
+			valid: appData.validateOrder(),
+			errors: [],
+		}),
+	});
+});
+
+events.on('formOrderErrors:change', (errors: Partial<IOrder>) => {
+	const { payment, address } = errors;
+	order.valid = !payment && !address;
+	order.errors = Object.values({ payment, address })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+events.on(
+	'input:change',
+	(data: { field: keyof IOrder; value: string }) => {
+		appData.setOrderField(data.field, data.value);
+	}
+);
+
+events.on('order:submit', () => {
+	modal.render({
+		content: contacts.render({
+			email: appData.order.email,
+			phone: appData.order.phone,
+			valid: appData.validateContacts(),
+			errors: [],
+		}),
+	});
+});
+events.on('formErrorsContacts:change', (errors: Partial<IOrder>) => {
+	const { email, phone } = errors;
+	contacts.valid = !email && !phone;
+	contacts.errors = Object.values({ email, phone })
+		.filter((i) => !!i)
+		.join('; ');
 });

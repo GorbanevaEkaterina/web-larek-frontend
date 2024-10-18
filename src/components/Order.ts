@@ -1,6 +1,7 @@
 import { Form } from './common/Form';
 import {  IOrder } from '../types';
 import { IEvents } from './base/events';
+import {ensureElement} from '../utils/utils'
 
 export class Order extends Form<Partial<IOrder>> {
 	protected _onlineButton: HTMLButtonElement;
@@ -17,7 +18,10 @@ export class Order extends Form<Partial<IOrder>> {
 			'button[name="cash"]'
 		);
 
-		this._address = container.elements.namedItem('address') as HTMLInputElement;
+		this._address = ensureElement<HTMLInputElement>(
+			'input',
+			this.container
+		);
 	
 		this._onlineButton.addEventListener('click', () => {
 			this.payment = 'card';

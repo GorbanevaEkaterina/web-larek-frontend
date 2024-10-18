@@ -67,12 +67,15 @@ export class AppState extends Model<IAppState>  {
 
 	validateOrder() {
 		const errors: typeof this.formErrors = {};
+		if (!this.order.payment) {
+			errors.payment = 'Выберите способ оплаты';
+		}
 
 		if (!this.order.address) {
 			errors.address = 'Укажите адрес';
 		}
 		this.formErrors = errors;
-		this.events.emit('formErrorsOrder:change', this.formErrors);
+		this.events.emit('formOrderErrors:change', this.formErrors);
 
 		return Object.keys(errors).length === 0;
 	}

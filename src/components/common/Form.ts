@@ -30,8 +30,9 @@ export class Form<T> extends Component<IFormState> {
 			this.events.emit(`${this.container.name}:submit`);
 		});
 	}
+
 	protected onInputChange(field: keyof T, value: string) {
-		this.events.emit(`${this.container.name}.${String(field)}:change`, {
+		this.events.emit(`input:change`, {
 			field,
 			value,
 		});
@@ -50,7 +51,5 @@ export class Form<T> extends Component<IFormState> {
 		Object.assign(this, inputs);
 		return this.container;
 	}
-	clearForm() {
-		this.container.reset();
-	}
+	
 }
