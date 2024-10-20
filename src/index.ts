@@ -133,7 +133,7 @@ events.on('card:toBasket', (item: IProductItem) => {
 
 events.on('card:deleteFromBasket', (item: IProductItem) => {
 	appData.removeBasket(item);
-	modal.close();
+	
 });
 
 events.on('сounter:change', () => {
