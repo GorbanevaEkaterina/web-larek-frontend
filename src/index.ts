@@ -1,16 +1,14 @@
 import './scss/styles.scss';
-
 import WebStoreApi from './components/WebStoreApi';
 import { API_URL, CDN_URL } from './utils/constants';
 import { EventEmitter } from './components/base/events';
 import { AppState} from './components/AppData';
 import { Page } from './components/Page';
-import { cloneTemplate, ensureElement, createElement } from './utils/utils';
+import { cloneTemplate, ensureElement} from './utils/utils';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
 import { IOrder, IProductItem} from './types';
 import { ProductCatalog,CatalogProdactsView,BasketProduct} from './components/ProductCatalog';
-import { Product} from './components/common/Product';
 import { Order } from './components/Order';
 import { Success } from './components/common/Success';
 import { Contacts } from './components/Contacts';
@@ -46,9 +44,9 @@ events.onAll(({ eventName, data }) => {
 	console.log(eventName, data);
 });
 
-//Бизнес-логика
 
-//1. Get запрос на получение всех продуктов магазина.
+
+// Get запрос на получение всех продуктов магазина.
 api
 	.getProductList()
 	.then((items) => {
@@ -58,7 +56,7 @@ api
 
 
 
-//2. Обрабатываем событие, которое выводит(отображает) карточки продуктов на главной странице.
+//Обрабатываем событие, которое выводит(отображает) карточки продуктов на главной странице.
 events.on('catalog:changed',() => {
 	page.catalog = appData.catalog.map((item) => {
 		const product = new ProductCatalog(cloneTemplate(cardCatalogTemplate), {
@@ -74,7 +72,7 @@ events.on('catalog:changed',() => {
 	});
 });
 
-//2.Блокируем прокрутку страницы если открыта модалка
+//Блокируем прокрутку страницы если открыта модалка
 events.on('modal:open', () => {
 	page.locked = true;
 });
@@ -130,13 +128,11 @@ events.on('basket:changed', () => {
 
 events.on('card:toBasket', (item: IProductItem) => {
 	appData.addBasket(item);
-	events.emit('сounter:change');
 	modal.close();
 });
 
 events.on('card:deleteFromBasket', (item: IProductItem) => {
 	appData.removeBasket(item);
-	events.emit('сounter:change');
 	modal.close();
 });
 

@@ -1,4 +1,4 @@
-// модель продукта(товара) 
+// структуру для товара в приложении.
 export interface IProductItem {
 	id: string;
 	description: string;
@@ -8,6 +8,7 @@ export interface IProductItem {
 	price: number | null;
 }
 
+// Интерфейс для хранения состояния всего приложения.
 export interface IAppState {
     catalog: IProductItem[];
     preview: string | null;
@@ -17,7 +18,8 @@ export interface IAppState {
 
 }
 
-// главная страница 
+// Интерфейс для представления состояния страницы.
+
 export interface IPage {
 	counter: number;
 	catalog: HTMLElement[];
@@ -26,17 +28,18 @@ export interface IPage {
 	wrapper: HTMLElement;
 }
 
-// корзина
+// Интерфейс для представления структуры корзины.
 export interface IBasket {
 	items: IProductItem[];
 }
 
+// Интерфейс для управления состоянием формы.
 export interface IFormState {
 	valid: boolean;
 	errors: string[];
 }
 
-// данные заказа 
+// Интерфейс для представления информации о заказе.
 export interface IOrder {
 	payment: string;
 	email: string;
@@ -45,41 +48,30 @@ export interface IOrder {
 	
 }
 
-
+// Интерфейс для описания действий, связанных с продуктом.
 export interface IProductActions {
 	onClick: (event: MouseEvent) => void;
 }
 
-// заказ оформлен 
+// Интерфейс для представления результатов оформления заказа.
 export interface IOrderResult {
 	id: string;
 	total: number;
 	
 }
-export type PaymentMethod = 'cash' | 'card';
 
-
-
-
-
+// Интерфейс для представления успешного результата операции.
 
 export interface ISuccess {
 	total: number;
 }
-// ошибки
+
+// Тип, представляющий объект, который может содержать ошибки формы. Ключами являются ключи из IOrder, а значениями — строки с описанием ошибок.
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
+ 
 
-//перечень категорий товаров 
-export enum ItemCategory {
-	SoftSkill = 'soft',
-	HardSkill = 'hard',
-	Button = 'button',
-	Other = 'other',
-	Additional = 'additional',
-}
-	
-
+// Интерфейс для представления отдельных деталей продукта.
 export interface IProduct {
 	id: string;
 	description?: string;
@@ -92,8 +84,11 @@ export interface IProduct {
 	selected?: boolean;
 }
 
+// Интерфейс для представления товара в корзине.
+
 export interface IBasketProduct {
 	title: string;
 	price: number | null;
 	index: number;
 }
+

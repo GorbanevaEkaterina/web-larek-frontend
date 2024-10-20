@@ -1,55 +1,52 @@
 import { Model } from './base/Model';
-import { IEvents } from './base/events';
-import {  FormErrors, IAppState, IProductItem, IOrder } from '../types';
+import { FormErrors, IAppState, IProductItem, IOrder } from '../types';
 
-export class AppState extends Model<IAppState>  {
-	basket:  IProductItem[] = [];
+export class AppState extends Model<IAppState> {
+	basket: IProductItem[] = [];
 	catalog: IProductItem[];
 	order: IOrder = {
 		address: '',
 		payment: 'card',
 		email: '',
-		phone: '',	
+		phone: '',
 	};
 	preview: string | null;
 	formErrors: FormErrors = {};
-	
-	
+
 	setCatalog(items: IProductItem[]) {
 		this.catalog = items;
 		this.emitChanges('catalog:changed');
 	}
 	getBasketCount() {
 		return this.basket.length;
-		}
-		getTotalBasket(){
-			return this.basket.reduce((sum, item) => {
-				return sum + item.price;
-			}, 0);
-		}
+	}
+	getTotalBasket() {
+		return this.basket.reduce((sum, item) => {
+			return sum + item.price;
+		}, 0);
+	}
 
 	setPreview(item: IProductItem) {
 		this.preview = item.id;
 		this.emitChanges('card:select', item);
-		
 	}
 	addBasket(item: IProductItem) {
 		this.basket.push(item);
 		this.emitChanges('basket:changed');
+		this.emitChanges('сounter:change');
 	}
 
 	inBasket(id: string) {
 		return this.basket.some((item) => item.id === id);
-		
 	}
 	getProductIDs(): string[] {
 		return this.basket.map((item) => item.id);
 	}
-	
 
 	removeBasket(item: IProductItem) {
 		this.basket = this.basket.filter((id) => id != item);
 		this.emitChanges('basket:changed');
+		this.emitChanges('сounter:change');
 	}
 	clearBasket() {
 		this.basket = [];
